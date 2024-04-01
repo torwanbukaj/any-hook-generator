@@ -1,8 +1,20 @@
-// Any-hook generator (fully customizable)
-// by torwan @ March 15th, 2024
+/* Any-hook generator (fully customizable)
+   by torwan @ April 1st, 2024
+   
+   - v1.0 (15th March 2024): Initial version.
+   - v1.1 (1st April 2024):
+     - Added slight overlap between the sub-parts (as big as a value
+       of "cc" is) to make sure that a final hook is a "one body" model.
+     - Added "part10_is_last" to disable all parts behind Part 10 (when
+       True). This may be helpful when you want to use a screw and a screw
+       hole in the Part 10 and don't want to waste time on zeroing all
+       parameters of the remaining parts behind the Part 10. Thanks to
+       **filipemeiracastro** (Thingiverse) for suggesting this!
+*/
 
 /* Description / Hints:
    - See more details on https://www.thingiverse.com/thing:6534190
+     or on https://github.com/torwanbukaj/any-hook-generator
    - All dimensions in [mm].
    - To generate STL file, render the object using F6 and save it
      using F7.
@@ -34,6 +46,9 @@ rounding_radius = 0.5;
 
 // Enable screw nest in Part 10
 part10_screw_nest_enable = false;
+
+// Disable all Parts behind Part 10
+part10_is_last = false;
 
 // ------------ Model shape parameters ----------
 // Numbering of the individual parts of a hook:
@@ -178,6 +193,34 @@ color_parts = true;
 /* [Hidden] */
 cc = 0.01;
 
+rotation_radius11c = part10_is_last ? 0 : rotation_radius11;
+rotation_angle11c = part10_is_last ? 0 : rotation_angle11;
+
+straight12c = part10_is_last ? 0 : straight12;
+
+rotation_radius13c = part10_is_last ? 0 : rotation_radius13;
+rotation_angle13c = part10_is_last ? 0 : rotation_angle13;
+
+straight14c = part10_is_last ? 0 : straight14;
+
+rotation_radius15c = part10_is_last ? 0 : rotation_radius15;
+rotation_angle15c = part10_is_last ? 0 : rotation_angle15;
+
+straight16c = part10_is_last ? 0 : straight16;
+
+rotation_radius17c = part10_is_last ? 0 : rotation_radius17;
+rotation_angle17c = part10_is_last ? 0 : rotation_angle17;
+
+straight18c = part10_is_last ? 0 : straight18;
+
+rotation_radius19c = part10_is_last ? 0 : rotation_radius19;
+rotation_angle19c = part10_is_last ? 0 : rotation_angle19;
+
+straight20c = part10_is_last ? 0 : straight20;
+
+rotation_radius21c = part10_is_last ? 0 : rotation_radius21;
+rotation_angle21c = part10_is_last ? 0 : rotation_angle21;
+
 // ------------- Helping parameters --------------
 // (do not modify below parameters)
 
@@ -216,17 +259,17 @@ rotate([0, 90, 0])
 
 module generate_hook()
 {
-add_turn_lu(angle = rotation_angle21, radius = rotation_radius21, color = part21_col)
-add_straight(length = straight20, color = part20_col)
-add_turn_ld(angle = rotation_angle19, radius = rotation_radius19, color = part19_col)
-add_straight(length = straight18, color = part18_col)
-add_turn_ld(angle = rotation_angle17, radius = rotation_radius17, color = part17_col)
-add_straight(length = straight16, color = part16_col)
-add_turn_ld(angle = rotation_angle15, radius = rotation_radius15, color = part15_col)
-add_straight(length = straight14, color = part14_col)
-add_turn_ld(angle = rotation_angle13, radius = rotation_radius13, color = part13_col)
-add_straight(length = straight12, color = part12_col)
-add_turn_lu(angle = rotation_angle11, radius = rotation_radius11, color = part11_col)
+add_turn_lu(angle = rotation_angle21c, radius = rotation_radius21c, color = part21_col)
+add_straight(length = straight20c, color = part20_col)
+add_turn_ld(angle = rotation_angle19c, radius = rotation_radius19c, color = part19_col)
+add_straight(length = straight18c, color = part18_col)
+add_turn_ld(angle = rotation_angle17c, radius = rotation_radius17c, color = part17_col)
+add_straight(length = straight16c, color = part16_col)
+add_turn_ld(angle = rotation_angle15c, radius = rotation_radius15c, color = part15_col)
+add_straight(length = straight14c, color = part14_col)
+add_turn_ld(angle = rotation_angle13c, radius = rotation_radius13c, color = part13_col)
+add_straight(length = straight12c, color = part12_col)
+add_turn_lu(angle = rotation_angle11c, radius = rotation_radius11c, color = part11_col)
 add_straight(length = straight10, color = part10_col, screw_nest = part10_screw_nest_enable)
 add_turn_ld(angle = rotation_angle9, radius = rotation_radius9, color = part9_col)
 add_straight(length = straight8, color = part8_col)
@@ -244,7 +287,7 @@ make_rounded_end(color = part22_col);
 
 module add_turn_ld(angle = 5, radius = 2, color = "Gold")
 {
-    translate([0, 0, -hook_thickness])
+    translate([0, cc, -hook_thickness])
     rotate([angle, 0, 0])
     {
         ty = radius * sin(angle);
@@ -267,6 +310,7 @@ module add_turn_ld(angle = 5, radius = 2, color = "Gold")
 
 module add_turn_lu(angle = 5, radius = 2, color = "Gold")
 {
+    translate([0, cc, 0])
     rotate([-angle, 0, 0])
     {
         ty = radius * sin(angle);
@@ -290,7 +334,7 @@ module add_turn_lu(angle = 5, radius = 2, color = "Gold")
 
 module add_straight(length = 2, color = "Gold", screw_nest = false)
 {
-    translate([0, -length+cc/2, 0])
+    translate([0, -length+cc, 0])
     {
         // Previous parts
         children();
